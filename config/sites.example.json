@@ -1,0 +1,12 @@
+[
+  {
+    "id": "firma-a",
+    "name": "Firma A",
+    "propertyId": "123456789"
+  },
+  {
+    "id": "firma-b",
+    "name": "Firma B",
+    "propertyId": "987654321"
+  }
+]

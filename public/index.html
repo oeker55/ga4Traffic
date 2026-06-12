@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farktör Canlı Trafik Paneli</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand-mark">FT</div>
+      <strong>Farktör Panel</strong>
+      <nav>
+        <a class="active" href="./">Genel Bakış</a>
+        <button id="manage-sites-nav" class="nav-link" type="button">
+          Siteler
+        </button>
+        <a href="#sites">Canlı Trafik</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">CANLI ANALYTICS</p>
+          <h1>Farktör Canlı Trafik Paneli</h1>
+          <p class="subtitle">
+            Tüm yönetilen sitelerin son 30 dakikalık performansı
+          </p>
+        </div>
+        <div class="actions">
+          <input id="search" type="search" placeholder="Site ara" />
+          <button id="manage-sites" class="primary" type="button">
+            Site Ekle
+          </button>
+          <button id="refresh" type="button">Yenile</button>
+        </div>
+      </header>
+
+      <section class="summary" aria-label="Özet">
+        <article>
+          <span>Toplam Aktif Kullanıcı</span>
+          <strong id="total-active">-</strong>
+        </article>
+        <article>
+          <span>İzlenen Site Sayısı</span>
+          <strong id="tracked-sites">-</strong>
+        </article>
+        <article>
+          <span>Ortalama Trafik</span>
+          <strong id="average-active">-</strong>
+        </article>
+        <article>
+          <span>Son Güncelleme</span>
+          <strong id="updated-at">-</strong>
+        </article>
+      </section>
+
+      <div id="notice" class="notice" hidden></div>
+      <section id="sites" class="site-grid" aria-live="polite"></section>
+    </main>
+
+    <dialog id="site-manager">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">SİTE YÖNETİMİ</p>
+          <h2>GA4 mülkleri</h2>
+        </div>
+        <button id="close-site-manager" class="icon-button" type="button">
+          Kapat
+        </button>
+      </div>
+
+      <form id="add-site-form">
+        <label>
+          Firma adı
+          <input
+            name="name"
+            type="text"
+            minlength="2"
+            maxlength="80"
+            placeholder="Örn. Yeni Firma"
+            required
+          />
+        </label>
+        <label>
+          GA4 Property ID
+          <input
+            name="propertyId"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]{6,20}"
+            placeholder="Örn. 123456789"
+            required
+          />
+        </label>
+        <button class="primary" type="submit">Erişimi Test Et ve Ekle</button>
+      </form>
+
+      <p id="site-form-message" class="form-message" hidden></p>
+
+      <div class="managed-sites-heading">
+        <h3>Mevcut siteler</h3>
+        <span id="managed-site-count"></span>
+      </div>
+      <div id="managed-sites" class="managed-sites"></div>
+    </dialog>
+
+    <template id="site-card-template">
+      <article class="site-card">
+        <div class="card-heading">
+          <h2></h2>
+          <span class="badge"></span>
+        </div>
+        <div class="traffic-row">
+          <strong class="active-users"></strong>
+          <span class="change"></span>
+        </div>
+        <div class="metrics">
+          <span>Sayfa Görüntüleme<strong class="page-views"></strong></span>
+          <span>Event<strong class="events"></strong></span>
+          <span>Key Event<strong class="key-events"></strong></span>
+        </div>
+        <svg
+          class="sparkline"
+          viewBox="0 0 240 48"
+          role="img"
+          aria-label="Trafik eğrisi"
+        >
+          <polyline points=""></polyline>
+        </svg>
+        <p class="card-error"></p>
+      </article>
+    </template>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

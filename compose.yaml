@@ -1,0 +1,54 @@
+services:
+  trafik-paneli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: farktor/canli-trafik-paneli:latest
+    container_name: farktor-canli-trafik
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${PANEL_BIND_IP:-127.0.0.1}:${PANEL_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      APP_BASE_PATH: "${APP_BASE_PATH:-}"
+      DEMO_MODE: "false"
+      CACHE_TTL_SECONDS: "${CACHE_TTL_SECONDS:-60}"
+      GA_CONCURRENCY: "${GA_CONCURRENCY:-4}"
+      ALLOWED_ORIGIN: "${ALLOWED_ORIGIN:-}"
+      PANEL_USERNAME: "${PANEL_USERNAME:?PANEL_USERNAME tanimlanmali}"
+      PANEL_PASSWORD: "${PANEL_PASSWORD:?PANEL_PASSWORD tanimlanmali}"
+      GOOGLE_PROJECT_ID: "${GOOGLE_PROJECT_ID:?GOOGLE_PROJECT_ID tanimlanmali}"
+      GOOGLE_CLIENT_EMAIL: "${GOOGLE_CLIENT_EMAIL:?GOOGLE_CLIENT_EMAIL tanimlanmali}"
+      GOOGLE_PRIVATE_KEY_BASE64: "${GOOGLE_PRIVATE_KEY_BASE64:?GOOGLE_PRIVATE_KEY_BASE64 tanimlanmali}"
+      SITES_FILE: /app/data/sites.json
+    volumes:
+      - type: bind
+        source: "${DATA_DIR:-./data}"
+        target: /app/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"

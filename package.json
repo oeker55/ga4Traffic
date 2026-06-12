@@ -1,0 +1,23 @@
+{
+  "name": "farktor-canli-trafik",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Farktor coklu GA4 canli trafik paneli",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/analytics.js && node --check src/sites.js && node --check src/test-access.js && node --check src/grant-access.js && node --check public/app.js",
+    "credentials:import": "node scripts/import-credentials.js",
+    "test:access": "node src/test-access.js",
+    "grant:access": "node src/grant-access.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@google-analytics/data": "^6.1.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
