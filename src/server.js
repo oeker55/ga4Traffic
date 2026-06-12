@@ -242,6 +242,10 @@ app.get("/api/health", healthHandler);
 
 if (basePath) {
   app.use((request, response, next) => {
+    if (request.path === "/") {
+      response.redirect(308, `${basePath}/`);
+      return;
+    }
     if (request.path === basePath) {
       response.redirect(308, `${basePath}/`);
       return;
