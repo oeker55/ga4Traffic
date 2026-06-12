@@ -6,5 +6,3 @@ secrets/
 data/*.json
 config/sites.json
 npm-debug.log*
-*.zip
-farktor-canli-trafik/
