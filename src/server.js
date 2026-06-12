@@ -308,7 +308,12 @@ panelRouter.get("/api/realtime", async (request, response) => {
 
 panelRouter.use(express.static(path.join(rootDir, "public")));
 
-app.use(basePath || "/", panelRouter);
+if (basePath) {
+  app.use(basePath, panelRouter);
+  app.use("/", panelRouter);
+} else {
+  app.use("/", panelRouter);
+}
 
 const server = app.listen(port, host, () => {
   console.log(`Canli trafik paneli: http://${host}:${port}${basePath || "/"}`);
