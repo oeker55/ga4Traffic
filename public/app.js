@@ -178,6 +178,7 @@ function renderSites() {
       card = createCard(site);
     }
     updateCard(card, site);
+    sitesElement.append(card);
     previousValues.set(site.id, {
       activeUsers: site.activeUsers,
       pageViews: aggregateMetric(site, "pageViews"),
