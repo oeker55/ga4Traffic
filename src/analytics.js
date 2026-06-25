@@ -4,7 +4,7 @@ const METRICS = [
   "activeUsers",
   "screenPageViews",
   "eventCount",
-  "keyEvents",
+  "conversions",
 ];
 
 function clientOptionsFromEnvironment() {
@@ -68,36 +68,40 @@ function statusFromChange(changePercent) {
   return "normal";
 }
 
-function metricMap(metricValues = []) {
-  return Object.fromEntries(
-    METRICS.map((name, index) => [
-      name,
-      numberValue(metricValues[index]?.value),
-    ]),
-  );
-}
-
 export async function fetchRealtimeSite(site, previousActiveUsers) {
   const [response] = await client.runRealtimeReport({
     property: `properties/${site.propertyId}`,
     dimensions: [{name: "minutesAgo"}],
     metrics: METRICS.map((name) => ({name})),
-    metricAggregations: ["TOTAL"],
     limit: 30,
     returnPropertyQuota: true,
   });
 
-  const totals = metricMap(response.totals?.[0]?.metricValues);
-  const trend = (response.rows ?? [])
+  const rows = response.rows ?? [];
+
+  const currentRow = rows.find(
+    (row) => numberValue(row.dimensionValues?.[0]?.value) === 0,
+  );
+  const currentActiveUsers = currentRow
+    ? numberValue(currentRow.metricValues?.[0]?.value)
+    : 0;
+
+  const trend = rows
     .map((row) => ({
       minutesAgo: numberValue(row.dimensionValues?.[0]?.value),
       activeUsers: numberValue(row.metricValues?.[0]?.value),
+      pageViews: numberValue(row.metricValues?.[1]?.value),
+      eventCount: numberValue(row.metricValues?.[2]?.value),
+      keyEvents: numberValue(row.metricValues?.[3]?.value),
     }))
-    .sort((a, b) => b.minutesAgo - a.minutesAgo)
-    .map((point) => point.activeUsers);
+    .sort((a, b) => b.minutesAgo - a.minutesAgo);
+
+  const totalPageViews = trend.reduce((sum, point) => sum + point.pageViews, 0);
+  const totalEventCount = trend.reduce((sum, point) => sum + point.eventCount, 0);
+  const totalKeyEvents = trend.reduce((sum, point) => sum + point.keyEvents, 0);
 
   const changePercent = calculateChange(
-    totals.activeUsers,
+    currentActiveUsers,
     previousActiveUsers,
   );
 
@@ -105,18 +109,17 @@ export async function fetchRealtimeSite(site, previousActiveUsers) {
     id: site.id,
     name: site.name,
     propertyId: site.propertyId,
-    activeUsers: totals.activeUsers,
-    pageViews: totals.screenPageViews,
-    eventCount: totals.eventCount,
-    keyEvents: totals.keyEvents,
+    activeUsers: currentActiveUsers,
+    pageViews: totalPageViews,
+    eventCount: totalEventCount,
+    keyEvents: totalKeyEvents,
     changePercent,
     status: statusFromChange(changePercent),
     trend,
     quota: response.propertyQuota
       ? {
           hourlyTokensRemaining:
-            response.propertyQuota.tokensPerProjectPerPropertyPerHour
-              ?.remaining,
+            response.propertyQuota.tokensPerHour?.remaining,
           concurrentRequestsRemaining:
             response.propertyQuota.concurrentRequests?.remaining,
         }

@@ -30,6 +30,12 @@
         </div>
         <div class="actions">
           <input id="search" type="search" placeholder="Site ara" />
+          <div class="window-tabs" role="tablist" aria-label="Zaman penceresi">
+            <button class="window-tab" data-window="1" type="button" role="tab" aria-selected="false">Son 1 dk</button>
+            <button class="window-tab active" data-window="5" type="button" role="tab" aria-selected="true">Son 5 dk</button>
+            <button class="window-tab" data-window="10" type="button" role="tab" aria-selected="false">Son 10 dk</button>
+            <button class="window-tab" data-window="30" type="button" role="tab" aria-selected="false">Son 30 dk</button>
+          </div>
           <button id="manage-sites" class="primary" type="button">
             Site Ekle
           </button>
@@ -52,7 +58,7 @@
         </article>
         <article>
           <span>Son Güncelleme</span>
-          <strong id="updated-at">-</strong>
+          <strong id="updated-at"><span class="live-dot" aria-hidden="true"></span>-</strong>
         </article>
       </section>
 
@@ -113,22 +119,31 @@
           <span class="badge"></span>
         </div>
         <div class="traffic-row">
-          <strong class="active-users"></strong>
-          <span class="change"></span>
+          <div class="active-users-block">
+            <small class="active-users-label">Anlık Kullanıcı (son 5 dk)</small>
+            <strong class="active-users"></strong>
+          </div>
+          <div class="change-block">
+            <small class="change-label">Önceki ölçüm</small>
+            <span class="change"></span>
+          </div>
         </div>
         <div class="metrics">
           <span>Sayfa Görüntüleme<strong class="page-views"></strong></span>
           <span>Event<strong class="events"></strong></span>
           <span>Key Event<strong class="key-events"></strong></span>
         </div>
-        <svg
-          class="sparkline"
-          viewBox="0 0 240 48"
-          role="img"
-          aria-label="Trafik eğrisi"
-        >
-          <polyline points=""></polyline>
-        </svg>
+        <figure class="sparkline-wrap">
+          <svg
+            class="sparkline"
+            viewBox="0 0 240 48"
+            role="img"
+            aria-label="Trafik eğrisi"
+          >
+            <polyline points=""></polyline>
+          </svg>
+          <figcaption class="sparkline-label"></figcaption>
+        </figure>
         <p class="card-error"></p>
       </article>
     </template>

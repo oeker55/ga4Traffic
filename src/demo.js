@@ -37,9 +37,16 @@ export function getDemoSites(previous = new Map()) {
           : changePercent <= -5
             ? "low"
             : "normal",
-      trend: Array.from({length: 20}, (_, point) =>
-        randomAround(activeUsers * (0.72 + point / 65), activeUsers * 0.09),
-      ),
+      trend: Array.from({length: 30}, (_, point) => {
+        const factor = 0.72 + point / 65;
+        return {
+          minutesAgo: 29 - point,
+          activeUsers: randomAround(activeUsers * factor, activeUsers * 0.09),
+          pageViews: randomAround(activeUsers * 1.8 * factor, activeUsers * 0.4),
+          eventCount: randomAround(activeUsers * 4.5 * factor, activeUsers * 1.0),
+          keyEvents: randomAround(activeUsers * 0.15 * factor, activeUsers * 0.05),
+        };
+      }),
       quota: null,
     };
   });

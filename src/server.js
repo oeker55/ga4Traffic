@@ -23,6 +23,10 @@ const host = process.env.HOST ?? "0.0.0.0";
 const basePath = normalizeBasePath(process.env.APP_BASE_PATH);
 const cacheTtlMs =
   Number.parseInt(process.env.CACHE_TTL_SECONDS ?? "60", 10) * 1000;
+const refreshIntervalMs = Number.parseInt(
+  process.env.REFRESH_INTERVAL_MS ?? "60000",
+  10,
+);
 const concurrency = Math.max(
   1,
   Number.parseInt(process.env.GA_CONCURRENCY ?? "4", 10),
@@ -201,6 +205,7 @@ async function getRealtimePayload() {
     cached: false,
     demoMode,
     windowMinutes: 30,
+    availableWindows: [1, 5, 10, 30],
     summary: {
       totalActiveUsers,
       trackedSites: sites.length,
@@ -239,6 +244,14 @@ function healthHandler(request, response) {
 }
 
 app.get("/api/health", healthHandler);
+app.get(`${basePath}/api/health`, healthHandler);
+
+function configHandler(request, response) {
+  response.json({refreshIntervalMs, cacheTtlMs});
+}
+
+app.get("/api/config", configHandler);
+app.get(`${basePath}/api/config`, configHandler);
 
 if (basePath) {
   app.use((request, response, next) => {
